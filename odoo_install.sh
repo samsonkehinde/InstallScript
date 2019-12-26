@@ -1,17 +1,13 @@
 #!/bin/bash
 OE_USER="odoo"
 OE_HOME="/$OE_USER"
-OE_HOME_EXT="/$OE_USER/${OE_USER}-server"
-# Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
 OE_PORT="8069"
-# Choose the Odoo version which you want to install. For example: 13.0, 12.0, 11.0 or saas-18. When using 'master' the master version will be installed.
-# IMPORTANT! This script contains extra libraries that are specifically needed for Odoo 13.0
 OE_VERSION="13.0"
 # Set this to True if you want to install the Odoo enterprise version!
 IS_ENTERPRISE=false
 # set the superadmin password
 OE_SUPERADMIN="admin"
-OE_CONFIG="${OE_USER}-server"
+OE_CONFIG="/etc/odoo/${OE_USER}.conf"
 
 ###  WKHTMLTOPDF download links
 WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
@@ -34,9 +30,8 @@ echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
 apt-get install nodejs npm -y
 npm install -g rtlcss
 
-#--------------------------------------------------
-# Install Wkhtmltopdf
-#--------------------------------------------------
+
+### Install Wkhtmltopdf
 echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 13 ----"
 #pick up correct one from x64 & x32 versions:
 if [ `uname -m` = "x86_64" ];then
@@ -77,23 +72,22 @@ echo -e "\n---- Create custom module directory ----"
 su $OE_USER -c "mkdir $OE_HOME/custom"
 su $OE_USER -c "mkdir $OE_HOME/custom/addons"
 
-echo -e "* Creating Odoo Config file"
-
-touch /etc/${OE_CONFIG}.conf
-echo -e "* Creating server config file"
-su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/${OE_CONFIG}.conf"
-su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> /etc/${OE_CONFIG}.conf"
-su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
-su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
+echo -e "---- Creating Odoo Config file -----"
+touch ${OE_CONFIG}
+echo -e "---- Creating server config file"
+su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
+su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
+su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
+su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
 
 if [ $IS_ENTERPRISE = "True" ]; then
-    su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
+    su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME}/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
 else
-    su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
+    su root -c "printf 'addons_path=${OE_HOME}/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
 fi
 
-chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
-chmod 640 /etc/${OE_CONFIG}.conf
+chown $OE_USER:$OE_USER ${OE_CONFIG}
+chmod 640 ${OE_CONFIG}
 
-echo -e "* Starting Odoo Service"
+echo -e "----- Starting Odoo Service -----"
 service odoo start
