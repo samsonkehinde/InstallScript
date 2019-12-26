@@ -28,11 +28,7 @@ IS_ENTERPRISE=false
 OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
 
-##
 ###  WKHTMLTOPDF download links
-## === Ubuntu Trusty x64 & x32 === (for other distributions please replace these two links,
-## in order to have correct version of wkhtmltopdf installed, for a danger note refer to 
-## https://github.com/odoo/odoo/wiki/Wkhtmltopdf ):
 WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
 WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_i386.deb
 
@@ -61,11 +57,11 @@ sudo apt-get install nodejs npm -y
 sudo npm install -g rtlcss
 
 #--------------------------------------------------
-# Install Wkhtmltopdf if needed
+# Install Wkhtmltopdf
 #--------------------------------------------------
 echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 13 ----"
 #pick up correct one from x64 & x32 versions:
-if [ "`getconf LONG_BIT`" == "64" ];then
+if [ `uname -m` = "x86_64" ];then
     _url=$WKHTMLTOX_X64
 else
     _url=$WKHTMLTOX_X32
@@ -122,7 +118,7 @@ sudo su $OE_USER -c "mkdir $OE_HOME/custom/addons"
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
 
-echo -e "* Create server config file"
+echo -e "* Creating Odoo Config file"
 
 sudo touch /etc/${OE_CONFIG}.conf
 echo -e "* Creating server config file"
@@ -130,8 +126,9 @@ sudo su root -c "printf '[options] \n; This is the password that allows database
 sudo su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
+
 if [ $IS_ENTERPRISE = "True" ]; then
-    sudo su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons\n' >> /etc/${OE_CONFIG}.conf"
+    sudo su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
 else
     sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
 fi
@@ -146,7 +143,6 @@ sudo chmod 755 $OE_HOME_EXT/start.sh
 #--------------------------------------------------
 # Adding ODOO as a deamon (initscript)
 #--------------------------------------------------
-
 echo -e "* Create init file"
 cat <<EOF > ~/$OE_CONFIG
 #!/bin/sh
