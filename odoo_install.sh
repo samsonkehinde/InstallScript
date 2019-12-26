@@ -157,7 +157,7 @@ sudo chmod 755 $OE_HOME_EXT/start.sh
 #--------------------------------------------------
 
 echo -e "* Create init file"
-cat <<EOF > ~/$OE_CONFIG
+cat <<EOF > $OE_CONFIG
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides: $OE_CONFIG
@@ -224,7 +224,7 @@ exit 0
 EOF
 
 echo -e "* Security Init File"
-sudo mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
+sudo mv $OE_CONFIG /etc/init.d/$OE_CONFIG
 sudo chmod 755 /etc/init.d/$OE_CONFIG
 sudo chown root: /etc/init.d/$OE_CONFIG
 
