@@ -17,8 +17,6 @@
 OE_USER="odoo"
 OE_HOME="/$OE_USER"
 OE_HOME_EXT="/$OE_USER/${OE_USER}-server"
-# Set to true if you want to install it, false if you don't need it or have it already installed.
-INSTALL_WKHTMLTOPDF=true
 # Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
 OE_PORT="8069"
 # Choose the Odoo version which you want to install. For example: 13.0, 12.0, 11.0 or saas-18. When using 'master' the master version will be installed.
@@ -65,21 +63,17 @@ sudo npm install -g rtlcss
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
 #--------------------------------------------------
-if $INSTALL_WKHTMLTOPDF; then
-  echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 13 ----"
-  #pick up correct one from x64 & x32 versions:
-  if [ "`getconf LONG_BIT`" == "64" ];then
-      _url=$WKHTMLTOX_X64
-  else
-      _url=$WKHTMLTOX_X32
-  fi
-  sudo wget $_url
-  sudo gdebi --n `basename $_url`
-  sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
-  sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
+echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 13 ----"
+#pick up correct one from x64 & x32 versions:
+if [ "`getconf LONG_BIT`" == "64" ];then
+    _url=$WKHTMLTOX_X64
 else
-  echo "Wkhtmltopdf isn't installed due to the choice of the user!"
+    _url=$WKHTMLTOX_X32
 fi
+sudo wget $_url
+sudo gdebi --n `basename $_url`
+sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
+sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
 
 echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
