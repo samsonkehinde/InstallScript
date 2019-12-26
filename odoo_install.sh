@@ -71,7 +71,7 @@ sudo apt-get install python-gevent -y
 #--------------------------------------------------
 echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 11 ----"
 #pick up correct one from x64 & x32 versions:
-if [ `uname -m` == "x86_64" ];
+if [ `uname -m` == "x86_64" ]; then
     _url=$WKHTMLTOX_X64
 else
     _url=$WKHTMLTOX_X32
