@@ -4,7 +4,7 @@ OE_HOME="/$OE_USER"
 OE_PORT="8069"
 OE_VERSION="11.0"
 # Set this to True if you want to install the Odoo enterprise version!
-IS_ENTERPRISE=false
+IS_ENTERPRISE="False"
 # set the superadmin password
 OE_SUPERADMIN="admin"
 OE_CONFIG="/etc/odoo/${OE_USER}.conf"
