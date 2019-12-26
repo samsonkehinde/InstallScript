@@ -36,8 +36,6 @@ OE_CONFIG="${OE_USER}-server"
 ## === Ubuntu Trusty x64 & x32 === (for other distributions please replace these two links,
 ## in order to have correct version of wkhtmltox installed, for a danger note refer to 
 ## https://www.odoo.com/documentation/8.0/setup/install.html#deb ):
-WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
-WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_i386.deb
 
 #--------------------------------------------------
 # Update Server
@@ -73,7 +71,7 @@ sudo apt-get install python-gevent -y
 #--------------------------------------------------
 echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 11 ----"
 #pick up correct one from x64 & x32 versions:
-if [[ "`getconf LONG_BIT`" == "64" ]];then
+if [ `uname -m` == "x86_64" ];
     _url=$WKHTMLTOX_X64
 else
     _url=$WKHTMLTOX_X32
