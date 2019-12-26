@@ -14,25 +14,28 @@ WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.
 WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_i386.deb
 
 ### Update Server
-echo -e "\n---- Update Server ----"
+echo -e "----- Update Server -----\n"
 # universe package is for Ubuntu 18.x
 add-apt-repository universe
 # libpng12-0 dependency for wkhtmltopdf
 add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
-apt-get update
+apt-get updatepip3 install pyldap
 apt-get upgrade -y
 
 ### Install Dependencies
-echo -e "\n--- Installing Python 3 + pip3 --"
+echo -e "----- Installing Dependencies -----\n"
 apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi -y
 
-echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
+### Install Python Dependencies
+pip3 install vobject qrcode pyldap
+
+echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
 apt-get install nodejs npm -y
 npm install -g rtlcss
 
 
 ### Install Wkhtmltopdf
-echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 13 ----"
+echo -e "----- Install wkhtml and place shortcuts on correct place for ODOO 13 -----\n"
 #pick up correct one from x64 & x32 versions:
 if [ `uname -m` = "x86_64" ];then
     _url=$WKHTMLTOX_X64
@@ -45,6 +48,8 @@ ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 ln -s /usr/local/bin/wkhtmltoimage /usr/bin
 
 ### Install ODOO
+echo -e "----- Installing ODOO Server -----\n"
+
 if [ $IS_ENTERPRISE = "True" ]; then
     # Odoo Enterprise install!
     echo -e "\n--- Create symlink for node"
@@ -63,18 +68,18 @@ if [ $IS_ENTERPRISE = "True" ]; then
         GITHUB_RESPONSE=$(sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/enterprise "$OE_HOME/enterprise/addons" 2>&1)
     done
 
-    echo -e "\n---- Installing Enterprise specific libraries ----"
+    echo -e "----- Installing Enterprise specific libraries -----\n"
     pip3 install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
     npm install -g less less-plugin-clean-css
 fi
 
-echo -e "\n---- Create custom module directory ----"
+echo -e "----- Create custom module directory -----\n"
 su $OE_USER -c "mkdir $OE_HOME/custom"
 su $OE_USER -c "mkdir $OE_HOME/custom/addons"
 
-echo -e "---- Creating Odoo Config file -----"
+echo -e "----- Creating Odoo Config file -----\n"
 touch ${OE_CONFIG}
-echo -e "---- Creating server config file"
+echo -e "----- Creating server config file -----\n"
 su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
 su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
 su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
@@ -89,5 +94,5 @@ fi
 chown $OE_USER:$OE_USER ${OE_CONFIG}
 chmod 640 ${OE_CONFIG}
 
-echo -e "----- Starting Odoo Service -----"
+echo -e "----- Starting Odoo Service ------\n"
 service odoo start
