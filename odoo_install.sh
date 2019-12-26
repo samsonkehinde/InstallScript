@@ -37,24 +37,24 @@ WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
 # universe package is for Ubuntu 18.x
-sudo add-apt-repository universe
+add-apt-repository universe
 # libpng12-0 dependency for wkhtmltopdf
-sudo add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
-sudo apt-get update
-sudo apt-get upgrade -y
+add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
+apt-get update
+apt-get upgrade -y
 
 #--------------------------------------------------
 # Install Dependencies
 #--------------------------------------------------
 echo -e "\n--- Installing Python 3 + pip3 --"
-sudo apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi -y
+apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi -y
 
 echo -e "\n---- Install python packages/requirements ----"
-sudo pip3 install -r https://github.com/odoo/odoo/raw/${OE_VERSION}/requirements.txt
+pip3 install -r https://raw.githubusercontent.com/odoo/odoo/13.0/requirements.txt
 
 echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
-sudo apt-get install nodejs npm -y
-sudo npm install -g rtlcss
+apt-get install nodejs npm -y
+npm install -g rtlcss
 
 #--------------------------------------------------
 # Install Wkhtmltopdf
@@ -66,32 +66,30 @@ if [ `uname -m` = "x86_64" ];then
 else
     _url=$WKHTMLTOX_X32
 fi
-sudo wget $_url
-sudo gdebi --n `basename $_url`
-sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
-sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
+wget $_url
+gdebi --n `basename $_url`
+ln -s /usr/local/bin/wkhtmltopdf /usr/bin
+ln -s /usr/local/bin/wkhtmltoimage /usr/bin
 
 echo -e "\n---- Create ODOO system user ----"
-sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
+adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 #The user should also be added to the sudo'ers group.
-sudo adduser $OE_USER sudo
+adduser $OE_USER sudo
 
 echo -e "\n---- Create Log directory ----"
-sudo mkdir /var/log/$OE_USER
-sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
+mkdir /var/log/$OE_USER
+chown $OE_USER:$OE_USER /var/log/$OE_USER
 
-#--------------------------------------------------
-# Install ODOO
-#--------------------------------------------------
+### Install ODOO
 echo -e "\n==== Installing ODOO Server ===="
-sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
+git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
 
 if [ $IS_ENTERPRISE = "True" ]; then
     # Odoo Enterprise install!
     echo -e "\n--- Create symlink for node"
-    sudo ln -s /usr/bin/nodejs /usr/bin/node
-    sudo su $OE_USER -c "mkdir $OE_HOME/enterprise"
-    sudo su $OE_USER -c "mkdir $OE_HOME/enterprise/addons"
+    ln -s /usr/bin/nodejs /usr/bin/node
+    su $OE_USER -c "mkdir $OE_HOME/enterprise"
+    su $OE_USER -c "mkdir $OE_HOME/enterprise/addons"
 
     GITHUB_RESPONSE=$(sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/enterprise "$OE_HOME/enterprise/addons" 2>&1)
     while [[ $GITHUB_RESPONSE == *"Authentication"* ]]; do
@@ -106,43 +104,41 @@ if [ $IS_ENTERPRISE = "True" ]; then
 
     echo -e "\n---- Added Enterprise code under $OE_HOME/enterprise/addons ----"
     echo -e "\n---- Installing Enterprise specific libraries ----"
-    sudo pip3 install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
-    sudo npm install -g less
-    sudo npm install -g less-plugin-clean-css
+    pip3 install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
+    npm install -g less
+    npm install -g less-plugin-clean-css
 fi
 
 echo -e "\n---- Create custom module directory ----"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom/addons"
+su $OE_USER -c "mkdir $OE_HOME/custom"
+su $OE_USER -c "mkdir $OE_HOME/custom/addons"
 
 echo -e "\n---- Setting permissions on home folder ----"
-sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
+chown -R $OE_USER:$OE_USER $OE_HOME/*
 
 echo -e "* Creating Odoo Config file"
 
-sudo touch /etc/${OE_CONFIG}.conf
+touch /etc/${OE_CONFIG}.conf
 echo -e "* Creating server config file"
-sudo su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/${OE_CONFIG}.conf"
-sudo su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> /etc/${OE_CONFIG}.conf"
-sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
-sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
+su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/${OE_CONFIG}.conf"
+su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> /etc/${OE_CONFIG}.conf"
+su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
+su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
 
 if [ $IS_ENTERPRISE = "True" ]; then
-    sudo su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
+    su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
 else
-    sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
+    su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
 fi
-sudo chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
-sudo chmod 640 /etc/${OE_CONFIG}.conf
+chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
+chmod 640 /etc/${OE_CONFIG}.conf
 
 echo -e "* Create startup file"
-sudo su root -c "echo '#!/bin/sh' >> $OE_HOME_EXT/start.sh"
-sudo su root -c "echo 'sudo -u $OE_USER $OE_HOME_EXT/odoo-bin --config=/etc/${OE_CONFIG}.conf' >> $OE_HOME_EXT/start.sh"
-sudo chmod 755 $OE_HOME_EXT/start.sh
+su root -c "echo '#!/bin/sh' >> $OE_HOME_EXT/start.sh"
+su root -c "echo 'sudo -u $OE_USER $OE_HOME_EXT/odoo-bin --config=/etc/${OE_CONFIG}.conf' >> $OE_HOME_EXT/start.sh"
+chmod 755 $OE_HOME_EXT/start.sh
 
-#--------------------------------------------------
-# Adding ODOO as a deamon (initscript)
-#--------------------------------------------------
+### Adding ODOO as a deamon (initscript)
 echo -e "* Create init file"
 cat <<EOF > ~/$OE_CONFIG
 #!/bin/sh
@@ -211,15 +207,15 @@ exit 0
 EOF
 
 echo -e "* Security Init File"
-sudo mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
-sudo chmod 755 /etc/init.d/$OE_CONFIG
-sudo chown root: /etc/init.d/$OE_CONFIG
+mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
+chmod 755 /etc/init.d/$OE_CONFIG
+chown root: /etc/init.d/$OE_CONFIG
 
 echo -e "* Start ODOO on Startup"
-sudo update-rc.d $OE_CONFIG defaults
+update-rc.d $OE_CONFIG defaults
 
 echo -e "* Starting Odoo Service"
-sudo su root -c "/etc/init.d/$OE_CONFIG start"
+su root -c "/etc/init.d/$OE_CONFIG start"
 echo "-----------------------------------------------------------"
 echo "Done! The Odoo server is up and running. Specifications:"
 echo "Port: $OE_PORT"
