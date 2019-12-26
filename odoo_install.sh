@@ -19,15 +19,17 @@ echo -e "----- Update Server -----\n"
 add-apt-repository universe
 # libpng12-0 dependency for wkhtmltopdf
 add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
+wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
+echo "deb http://nightly.odoo.com/11.0/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
 apt-get updatepip3 install pyldap
-apt-get upgrade -y
+apt-get update && apt-get upgrade -y
 
 ### Install Dependencies
 echo -e "----- Installing Dependencies -----\n"
-apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi -y
+apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi odoo -y
 
 ### Install Python Dependencies
-pip3 install vobject qrcode pyldap
+pip3 install vobject qrcode pyldap num2words
 
 echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
 apt-get install nodejs npm -y
@@ -48,8 +50,7 @@ ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 ln -s /usr/local/bin/wkhtmltoimage /usr/bin
 
 ### Install ODOO
-echo -e "----- Installing ODOO Server -----\n"
-
+echo -e "----- Install Enterprise Repository -----\n"
 if [ $IS_ENTERPRISE = "True" ]; then
     # Odoo Enterprise install!
     echo -e "\n--- Create symlink for node"
