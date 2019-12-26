@@ -2,7 +2,7 @@
 OE_USER="odoo"
 OE_HOME="/$OE_USER"
 OE_PORT="8069"
-OE_VERSION="13.0"
+OE_VERSION="11.0"
 # Set this to True if you want to install the Odoo enterprise version!
 IS_ENTERPRISE=false
 # set the superadmin password
@@ -20,7 +20,7 @@ add-apt-repository universe
 # libpng12-0 dependency for wkhtmltopdf
 add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
 wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
-echo "deb http://nightly.odoo.com/11.0/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
+echo "deb 'http://nightly.odoo.com/$OE_VERSION/nightly/deb/' ./" >> /etc/apt/sources.list.d/odoo.list
 apt-get updatepip3 install pyldap
 apt-get update && apt-get upgrade -y
 
@@ -35,7 +35,6 @@ echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
 apt-get install nodejs npm -y
 npm install -g rtlcss
 
-
 ### Install Wkhtmltopdf
 echo -e "----- Install wkhtml and place shortcuts on correct place for ODOO 13 -----\n"
 #pick up correct one from x64 & x32 versions:
@@ -48,6 +47,12 @@ wget $_url
 gdebi --n `basename $_url`
 ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 ln -s /usr/local/bin/wkhtmltoimage /usr/bin
+
+### Remove Postgres
+service odoo stop
+apt-get autoremove postgresql -y
+service postgresql stop
+apt-get update -y
 
 ### Install ODOO
 echo -e "----- Install Enterprise Repository -----\n"
@@ -83,6 +88,10 @@ touch ${OE_CONFIG}
 echo -e "----- Creating server config file -----\n"
 su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
 su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
+su root -c "printf 'db_host = ${DBHOST}\n' >> ${OE_CONFIG}"
+su root -c "printf 'db_port = ${DBPORT}\n' >> ${OE_CONFIG}"
+su root -c "printf 'db_user = ${DBUSER}\n' >> ${OE_CONFIG}"
+su root -c "printf 'db_password = ${DBPASSWORD}\n' >> ${OE_CONFIG}"
 su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
 su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
 
