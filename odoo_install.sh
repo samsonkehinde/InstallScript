@@ -140,7 +140,7 @@ chmod 755 $OE_HOME_EXT/start.sh
 
 ### Adding ODOO as a deamon (initscript)
 echo -e "* Create init file"
-cat <<EOF > ~/$OE_CONFIG
+cat <<EOF > $OE_CONFIG
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides: $OE_CONFIG
@@ -207,7 +207,7 @@ exit 0
 EOF
 
 echo -e "* Security Init File"
-mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
+mv $OE_CONFIG /etc/init.d/$OE_CONFIG
 chmod 755 /etc/init.d/$OE_CONFIG
 chown root: /etc/init.d/$OE_CONFIG
 
