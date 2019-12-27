@@ -60,10 +60,6 @@ apt-get autoremove postgresql -y
 service postgresql stop
 apt-get update -y
 
-### Create Addons folder
-su $OE_USER -c "mkdir -p $OE_HOME/addons"
-mv  "/usr/lib/python3/dist-packages/odoo/addons" $OE_HOME/addons
-
 ### Install ODOO
 echo -e "----- Install Enterprise Repository -----\n"
 if [ $IS_ENTERPRISE = "True" ]; then
@@ -90,7 +86,6 @@ fi
 
 echo -e "----- Create module directories -----\n"
 su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
-su $OE_USER -c "mkdir -p $OE_HOME/addons"
 
 echo -e "----- update server config file -----\n"
 >  /etc/odoo/odoo.conf
@@ -104,9 +99,9 @@ su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
 su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
 
 if [ $IS_ENTERPRISE = "True" ]; then
-    su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME}/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
+    su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,/usr/lib/python3/dist-packages/odoo/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
 else
-    su root -c "printf 'addons_path=${OE_HOME}/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
+    su root -c "printf 'addons_path=/usr/lib/python3/dist-packages/odoo/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
 fi
 
 echo -e "----- Starting Odoo Service ------\n"
