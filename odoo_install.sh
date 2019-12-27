@@ -35,7 +35,7 @@ echo -e "----- Installing Dependencies -----\n"
 apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi odoo -y
 
 ### Install Python Dependencies
-pip3 install vobject qrcode pyldap num2words
+pip3 install vobject qrcode pyldap num2words phonenumbers
 
 echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
 apt-get install nodejs npm -y
