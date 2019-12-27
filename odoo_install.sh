@@ -23,7 +23,7 @@ add-apt-repository universe
 # libpng12-0 dependency for wkhtmltopdf
 add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
 wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
-echo "deb 'http://nightly.odoo.com/$OE_VERSION/nightly/deb/' ./" >> /etc/apt/sources.list.d/odoo.list
+echo "deb http://nightly.odoo.com/$OE_VERSION/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
 apt-get update && apt-get upgrade -y
 
 ### Install Dependencies
