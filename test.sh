@@ -5,10 +5,10 @@ OE_PORT="8069"
 IS_ENTERPRISE="False"   # Set this to True if you want to install the Odoo enterprise version!
 OE_SUPERADMIN="admin"   # set the superadmin password
 OE_CONFIG="/etc/${OE_USER}/${OE_USER}.conf"
-DBUSER = "${DBUSER:-odoo}"
-DBPASSWORD = "${DBPASSWORD:-odoo1234}"
+DBUSER="${DBUSER:-odoo}"
+DBPASSWORD="${DBPASSWORD:-odoo1234}"
 [ -z "$DBHOST" ] && read -p 'DB HOST: ' DBHOST
-DBPORT = "${DBPORT:-5432}"
+DBPORT="${DBPORT:-5432}"
 
 apt install python-pip nginx -y
 
