@@ -39,7 +39,7 @@ if [ ! -d ${OE_HOME} ]; then
 fi
 
 ### Install Python Dependencies
-pip3 install vobject qrcode pyldap num2words phonenumbers
+pip3 install vobject qrcode num2words phonenumbers pyldap
 
 echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
 apt-get install nodejs npm -y
