@@ -92,7 +92,8 @@ echo -e "----- Create module directories -----\n"
 su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 su $OE_USER -c "mkdir -p $OE_HOME/addons"
 
-echo -e "----- Creating server config file -----\n"
+echo -e "----- update server config file -----\n"
+>  /etc/odoo/odoo.conf
 su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
 su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
 su root -c "printf 'db_host = ${DBHOST}\n' >> ${OE_CONFIG}"
