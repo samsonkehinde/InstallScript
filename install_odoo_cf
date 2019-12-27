@@ -17,7 +17,8 @@ WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.
 echo -e "----- Installing Odoo -----\n"
 wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 echo "deb http://nightly.odoo.com/11.0/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
-apt-get update && apt-get install odoo
+apt-get update
+apt-get install odoo -y
 
 ### Install Python Dependencies
 pip3 install vobject qrcode pyldap num2words phonenumbers
