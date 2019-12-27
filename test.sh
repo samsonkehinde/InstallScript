@@ -11,7 +11,8 @@ DBPASSWORD="${DBPASSWORD:-odoo1234}"
 DBHOST=opt2pnryjwq699.cwwvrr2acdyz.eu-west-1.rds.amazonaws.com
 DBPORT="${DBPORT:-5432}"
 
-apt install python3-pip gdebi nginx -y
+apt-get update -y
+apt-get install python3-pip gdebi nginx -y
 
 ### Installing Odoo
 echo -e "----- Installing Odoo ------\n"
