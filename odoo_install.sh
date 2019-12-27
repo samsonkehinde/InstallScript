@@ -10,7 +10,10 @@ OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_HOME}/${OE_USER}.conf"
 
 ### Create the home directory if it does not exist
-[ ! -d $OE_HOME ] && su $OE_USER -c "mkdir -p $OE_HOME"
+if [ ! -d $OE_HOME ]; then
+    echo -e "Creating directory \"$OE_HOME\""
+    su $OE_USER -c "mkdir -p $OE_HOME"
+fi
 
 ###  WKHTMLTOPDF download links
 WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
