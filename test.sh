@@ -86,14 +86,14 @@ su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 
 echo -e "----- Updating Odoo config file -----\n"
 >  /etc/odoo/odoo.conf
-su $OE_USER -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'db_host = ${DBHOST}\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'db_port = ${DBPORT}\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'db_user = ${DBUSER}\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'db_password = ${DBPASSWORD}\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
-su $OE_USER -c "printf 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'db_host = ${DBHOST}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'db_port = ${DBPORT}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'db_user = ${DBUSER}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'db_password = ${DBPASSWORD}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "echo -e 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
 
 if [ $IS_ENTERPRISE = "True" ]; then
     su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,/usr/lib/python3/dist-packages/odoo/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
