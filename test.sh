@@ -10,7 +10,7 @@ DBPASSWORD="${DBPASSWORD:-odoo1234}"
 [ -z "$DBHOST" ] && read -p 'DB HOST: ' DBHOST
 DBPORT="${DBPORT:-5432}"
 
-apt install python-pip nginx -y
+apt install python3-pip nginx -y
 
 ### Installing Odoo
 echo -e "----- Installing Odoo ------\n"
