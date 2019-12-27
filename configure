@@ -41,12 +41,6 @@ gdebi --n `basename $_url`
 ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 ln -s /usr/local/bin/wkhtmltoimage /usr/bin
 
-### Remove Postgres
-service odoo stop
-apt-get autoremove postgresql -y
-service postgresql stop
-apt-get update -y
-
 ### Install ODOO
 echo -e "----- Install Enterprise Repository -----\n"
 if [ $IS_ENTERPRISE = "True" ]; then
