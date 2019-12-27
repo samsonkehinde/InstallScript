@@ -2,26 +2,28 @@
 OE_USER="odoo"
 OE_HOME="/$OE_USER"
 OE_PORT="8069"
-OE_VERSION="11.0"
-# Set this to True if you want to install the Odoo enterprise version!
-IS_ENTERPRISE="False"
-# set the superadmin password
-OE_SUPERADMIN="admin"
+IS_ENTERPRISE="False"   # Set this to True if you want to install the Odoo enterprise version!
+OE_SUPERADMIN="admin"   # set the superadmin password
 OE_CONFIG="/etc/${OE_USER}/${OE_USER}.conf"
+
+apt install python-pip -y
+
+### Installing Odoo
+echo -e "----- Installing Odoo ------\n"
+wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
+echo "deb http://nightly.odoo.com/11.0/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
+apt-get update -y && apt-get install odoo -y
+
+echo -e "----- Removing Local Install of Postgres ------\n"
+### Removing Postgres
+service odoo stop
+apt-get autoremove postgresql -y
+service postgresql stop
+apt-get update -y
 
 ###  WKHTMLTOPDF download links
 WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
 WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_i386.deb
-
-### Install Odoo
-echo -e "----- Installing Odoo -----\n"
-wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
-echo "deb http://nightly.odoo.com/11.0/nightly/deb/ ./" >> /etc/apt/sources.list.d/odoo.list
-apt-get update
-apt-get install python3 python3-pip odoo -y
-
-### Install Python Dependencies
-pip3 install vobject qrcode pyldap num2words phonenumbers
 
 ### Create the home directory if it does not exist
 if [ ! -d ${OE_HOME} ]; then
@@ -30,12 +32,15 @@ if [ ! -d ${OE_HOME} ]; then
     chown $OE_USER:$OE_USER $OE_HOME
 fi
 
+### Install Python Dependencies
+pip3 install vobject qrcode pyldap num2words phonenumbers
+
 echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
 apt-get install nodejs npm -y
 npm install -g rtlcss
 
 ### Install Wkhtmltopdf
-echo -e "----- Install wkhtml and place shortcuts on correct place for ODOO 13 -----\n"
+echo -e "----- Install wkhtml -----\n"
 #pick up correct one from x64 & x32 versions:
 if [ `uname -m` = "x86_64" ];then
     _url=$WKHTMLTOX_X64
@@ -46,12 +51,6 @@ wget $_url
 gdebi --n `basename $_url`
 ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 ln -s /usr/local/bin/wkhtmltoimage /usr/bin
-
-### Remove Postgres
-service odoo stop
-apt-get autoremove postgresql -y
-service postgresql stop
-apt-get update -y
 
 ### Install ODOO
 echo -e "----- Install Enterprise Repository -----\n"
@@ -80,7 +79,7 @@ fi
 echo -e "----- Create module directories -----\n"
 su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 
-echo -e "----- Updating server config file -----\n"
+echo -e "----- Updating Odoo config file -----\n"
 >  /etc/odoo/odoo.conf
 su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
 su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
@@ -99,3 +98,4 @@ fi
 
 echo -e "----- Starting Odoo Service ------\n"
 service odoo start
+service nginx start
