@@ -7,7 +7,10 @@ OE_VERSION="11.0"
 IS_ENTERPRISE="False"
 # set the superadmin password
 OE_SUPERADMIN="admin"
-OE_CONFIG="/etc/odoo/${OE_USER}.conf"
+OE_CONFIG="${OE_HOME}/${OE_USER}.conf"
+
+### Create the home directory if it does not exist
+[ ! -d $OE_HOME ] && su $OE_USER -c "mkdir -p $OE_HOME"
 
 ###  WKHTMLTOPDF download links
 WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
@@ -55,7 +58,7 @@ apt-get update -y
 
 ### Create Addons folder
 su $OE_USER -c "mkdir -p $OE_HOME/addons"
-mv  "/usr/lib/python2.7/dist-packages/odoo/addons" $OE_HOME/addons
+mv  "/usr/lib/python3/dist-packages/odoo/addons" $OE_HOME/addons
 
 ### Install ODOO
 echo -e "----- Install Enterprise Repository -----\n"
@@ -81,8 +84,9 @@ if [ $IS_ENTERPRISE = "True" ]; then
     npm install -g less less-plugin-clean-css
 fi
 
-echo -e "----- Create custom module directory -----\n"
+echo -e "----- Create module directories -----\n"
 su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
+su $OE_USER -c "mkdir -p $OE_HOME/addons"
 
 echo -e "----- Creating Odoo Config file -----\n"
 touch ${OE_CONFIG}
