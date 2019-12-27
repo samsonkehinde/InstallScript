@@ -4,7 +4,7 @@
 
 ##### 1. Download the script:
 ```
-sudo wget https://raw.githubusercontent.com/Yenthe666/InstallScript/13.0/odoo_install.sh
+sudo wget https://raw.githubusercontent.com/samsonkehinde/InstallScript/drugstoc/configure.sh
 ```
 ##### 2. Modify the parameters as you wish.
 There are a few things you can configure, this is the most used list:<br/>
