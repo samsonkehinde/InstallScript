@@ -10,9 +10,10 @@ OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_HOME}/${OE_USER}.conf"
 
 ### Create the home directory if it does not exist
-if [ ! -d $OE_HOME ]; then
+if [ ! -d ${OE_HOME} ]; then
     echo -e "Creating directory \"$OE_HOME\""
-    su $OE_USER -c "mkdir -p $OE_HOME"
+    su root -c "mkdir -p $OE_HOME"
+    chown $OE_USER:$OE_USER $OE_HOME
 fi
 
 ###  WKHTMLTOPDF download links
