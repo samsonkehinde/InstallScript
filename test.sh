@@ -7,7 +7,8 @@ OE_SUPERADMIN="admin"   # set the superadmin password
 OE_CONFIG="/etc/${OE_USER}/${OE_USER}.conf"
 DBUSER="${DBUSER:-odoo}"
 DBPASSWORD="${DBPASSWORD:-odoo1234}"
-[ -z "$DBHOST" ] && read -p 'DB HOST: ' DBHOST
+#[ -z "$DBHOST" ] && read -p 'DB HOST: ' DBHOST
+DBHOST=opt2pnryjwq699.cwwvrr2acdyz.eu-west-1.rds.amazonaws.com
 DBPORT="${DBPORT:-5432}"
 
 apt install python3-pip gdebi nginx -y
