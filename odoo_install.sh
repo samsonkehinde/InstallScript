@@ -7,7 +7,7 @@ OE_VERSION="11.0"
 IS_ENTERPRISE="False"
 # set the superadmin password
 OE_SUPERADMIN="admin"
-OE_CONFIG="${OE_HOME}/${OE_USER}.conf"
+OE_CONFIG="/etc/${OE_USER}/${OE_USER}.conf"
 
 ### Create the home directory if it does not exist
 if [ ! -d ${OE_HOME} ]; then
@@ -92,8 +92,6 @@ echo -e "----- Create module directories -----\n"
 su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 su $OE_USER -c "mkdir -p $OE_HOME/addons"
 
-echo -e "----- Creating Odoo Config file -----\n"
-touch ${OE_CONFIG}
 echo -e "----- Creating server config file -----\n"
 su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
 su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
@@ -109,9 +107,6 @@ if [ $IS_ENTERPRISE = "True" ]; then
 else
     su root -c "printf 'addons_path=${OE_HOME}/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
 fi
-
-chown $OE_USER:$OE_USER ${OE_CONFIG}
-chmod 640 ${OE_CONFIG}
 
 echo -e "----- Starting Odoo Service ------\n"
 service odoo start
