@@ -1,4 +1,4 @@
-# [Odoo](https://www.odoo.com "Odoo's Homepage") Install Script
+# [Odoo] Configure Install Script
 
 ## Installation procedure
 
