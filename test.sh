@@ -12,7 +12,7 @@ DBHOST=opt2pnryjwq699.cwwvrr2acdyz.eu-west-1.rds.amazonaws.com
 DBPORT="${DBPORT:-5432}"
 
 apt-get update -y
-apt-get install python3-pip gdebi nginx -y
+apt-get install python3-pip gdebi nginx libsasl2-dev python-dev libldap2-dev libssl-dev -y
 
 ### Installing Odoo
 echo -e "----- Installing Odoo ------\n"
