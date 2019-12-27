@@ -41,9 +41,8 @@ fi
 ### Install Python Dependencies
 pip3 install vobject qrcode num2words phonenumbers pyldap
 
-echo -e "----- Installing nodeJS NPM and rtlcss for LTR support -----\n"
+echo -e "----- Installing nodeJS NPM -----\n"
 apt-get install nodejs npm -y
-npm install -g rtlcss
 
 ### Install Wkhtmltopdf
 echo -e "----- Install wkhtml -----\n"
@@ -87,14 +86,14 @@ su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 
 echo -e "----- Updating Odoo config file -----\n"
 >  /etc/odoo/odoo.conf
-su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
-su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
-su root -c "printf 'db_host = ${DBHOST}\n' >> ${OE_CONFIG}"
-su root -c "printf 'db_port = ${DBPORT}\n' >> ${OE_CONFIG}"
-su root -c "printf 'db_user = ${DBUSER}\n' >> ${OE_CONFIG}"
-su root -c "printf 'db_password = ${DBPASSWORD}\n' >> ${OE_CONFIG}"
-su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
-su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf '[options] \n; This is the password that allows database operations:\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'db_host = ${DBHOST}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'db_port = ${DBPORT}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'db_user = ${DBUSER}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'db_password = ${DBPASSWORD}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> ${OE_CONFIG}"
+su $OE_USER -c "printf 'logfile = /var/log/${OE_USER}/${OE_USER}-server.log\n' >> ${OE_CONFIG}"
 
 if [ $IS_ENTERPRISE = "True" ]; then
     su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,/usr/lib/python3/dist-packages/odoo/addons,${OE_HOME}/custom/addons\n' >> ${OE_CONFIG}"
