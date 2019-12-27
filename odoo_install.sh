@@ -21,7 +21,6 @@ add-apt-repository universe
 add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ xenial main"
 wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 echo "deb 'http://nightly.odoo.com/$OE_VERSION/nightly/deb/' ./" >> /etc/apt/sources.list.d/odoo.list
-apt-get updatepip3 install pyldap
 apt-get update && apt-get upgrade -y
 
 ### Install Dependencies
