@@ -9,13 +9,6 @@ IS_ENTERPRISE="False"
 OE_SUPERADMIN="admin"
 OE_CONFIG="/etc/${OE_USER}/${OE_USER}.conf"
 
-### Create the home directory if it does not exist
-if [ ! -d ${OE_HOME} ]; then
-    echo -e "Creating directory \"$OE_HOME\""
-    su root -c "mkdir -p $OE_HOME"
-    chown $OE_USER:$OE_USER $OE_HOME
-fi
-
 ###  WKHTMLTOPDF download links
 WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
 WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_i386.deb
@@ -33,6 +26,13 @@ apt-get update && apt-get upgrade -y
 ### Install Dependencies
 echo -e "----- Installing Dependencies -----\n"
 apt-get install git python3 python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libpng12-0 gdebi odoo -y
+
+### Create the home directory if it does not exist
+if [ ! -d ${OE_HOME} ]; then
+    echo -e "Creating directory \"$OE_HOME\""
+    su root -c "mkdir -p $OE_HOME"
+    chown $OE_USER:$OE_USER $OE_HOME
+fi
 
 ### Install Python Dependencies
 pip3 install vobject qrcode pyldap num2words phonenumbers
